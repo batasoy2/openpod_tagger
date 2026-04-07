@@ -1,0 +1,54 @@
+{
+  "name": "openpod-tagger",
+  "version": "1.0.0",
+  "description": "openPod Auto Tagger - Identify and tag MP3/FLAC files using acoustic fingerprinting",
+  "main": "main.js",
+  "author": "Barış Atasoy <barisatasoy75@gmail.com>",
+  "license": "GPL-3.0",
+  "homepage": "https://github.com/batasoy2/openpod_tagger",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/batasoy2/openpod_tagger.git"
+  },
+  "bugs": {
+    "url": "https://github.com/batasoy2/openpod_tagger/issues"
+  },
+  "scripts": {
+    "start": "electron . --no-sandbox",
+    "dist:deb": "electron-builder --linux deb",
+    "dist:appimage": "electron-builder --linux AppImage"
+  },
+  "dependencies": {
+    "electron-store": "^8.1.0",
+    "jsmediatags": "^3.9.7",
+    "node-fetch": "^2.7.0",
+    "node-id3": "^0.2.6"
+  },
+  "devDependencies": {
+    "electron": "27.0.0",
+    "electron-builder": "26.8.1"
+  },
+  "build": {
+    "electronVersion": "27.0.0",
+    "appId": "com.batasoy2.openpod_tagger",
+    "productName": "openPod Tagger",
+    "directories": {
+      "output": "release"
+    },
+    "linux": {
+      "target": ["deb"],
+      "category": "Audio",
+      "icon": "assets/icon.png",
+      "maintainer": "Barış Atasoy <barisatasoy75@gmail.com>",
+      "synopsis": "openPod Auto Tagger",
+      "description": "Automatically tag MP3/FLAC files using acoustic fingerprinting"
+    },
+    "files": [
+      "main.js",
+      "index.html",
+      "settings.html",
+      "i18n.js",
+      "locales/**/*"
+    ]
+  }
+}

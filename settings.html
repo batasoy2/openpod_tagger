@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Settings - MusicBrainz Tagger</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      padding: 25px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #3498db;
+    }
+    
+    .setting-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    
+    select, input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    
+    select {
+      cursor: pointer;
+      background: white;
+    }
+    
+    input {
+      font-family: monospace;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+    
+    .help-text {
+      font-size: 12px;
+      color: #7f8c8d;
+      margin-top: 5px;
+    }
+    
+    .help-text a {
+      color: #3498db;
+      text-decoration: none;
+    }
+    
+    .help-text a:hover {
+      text-decoration: underline;
+    }
+    
+    .button-group {
+      margin-top: 25px;
+      display: flex;
+      gap: 10px;
+    }
+    
+    button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+    
+    button.primary {
+      background: #3498db;
+      color: white;
+    }
+    
+    button.primary:hover {
+      background: #2980b9;
+    }
+    
+    button.secondary {
+      background: #95a5a6;
+      color: white;
+    }
+    
+    button.secondary:hover {
+      background: #7f8c8d;
+    }
+    
+    .status {
+      margin-top: 15px;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 13px;
+      display: none;
+    }
+    
+    .status.success {
+      background: #d5f4e6;
+      color: #27ae60;
+      display: block;
+    }
+    
+    .status.error {
+      background: #fadbd8;
+      color: #e74c3c;
+      display: block;
+    }
+    
+    .info-box {
+      background: #e8f4fd;
+      padding: 12px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-size: 12px;
+      color: #2980b9;
+    }
+    
+    hr {
+      margin: 20px 0;
+      border: none;
+      border-top: 1px solid #e0e0e0;
+    }
+    
+    .warning-box {
+      background: #fff3cd;
+      padding: 12px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      font-size: 12px;
+      color: #856404;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>⚙️ Settings</h2>
+    
+    <div class="warning-box">
+      ⚠️ Language change requires app restart to take effect.
+    </div>
+    
+    <div class="setting-group">
+      <label for="languageSelect">🌐 Language / Dil / Sprache</label>
+      <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="tr">Türkçe</option>
+        <option value="de">Deutsch</option>
+        <option value="es">Español</option>
+        <option value="fr">Français</option>
+      </select>
+    </div>
+    
+    <hr>
+    
+    <div class="info-box">
+      💡 <strong>Acoustic fingerprinting:</strong> Get your free AcoustID API key below to identify songs by sound.
+    </div>
+    
+    <div class="setting-group">
+      <label for="acoustidKey">AcoustID API Key (Required)</label>
+      <input type="text" id="acoustidKey" placeholder="Enter your AcoustID API key">
+      <div class="help-text">
+        <a href="#" id="getAcoustidKeyLink">Get a free API key from AcoustID</a>
+      </div>
+    </div>
+    
+    <hr>
+    
+    <div class="setting-group">
+      <label for="lastfmKey">Last.fm API Key (Optional)</label>
+      <input type="text" id="lastfmKey" placeholder="Enter your Last.fm API key">
+      <div class="help-text">
+        <a href="#" id="getApiKeyLink">Get a free API key from Last.fm</a>
+      </div>
+    </div>
+    
+    <div class="setting-group">
+      <label for="geniusKey">Genius API Key (Optional)</label>
+      <input type="text" id="geniusKey" placeholder="Enter your Genius API key">
+      <div class="help-text">
+        <a href="#" id="getGeniusKeyLink">Get a free API key from Genius</a>
+      </div>
+    </div>
+    
+    <div class="button-group">
+      <button class="primary" id="saveBtn">💾 Save Settings</button>
+      <button class="secondary" id="cancelBtn">Cancel</button>
+    </div>
+    
+    <div id="status" class="status"></div>
+  </div>
+  
+  <script>
+    const { ipcRenderer } = require('electron');
+    
+    const languageSelect = document.getElementById('languageSelect');
+    const acoustidKeyInput = document.getElementById('acoustidKey');
+    const lastfmKeyInput = document.getElementById('lastfmKey');
+    const geniusKeyInput = document.getElementById('geniusKey');
+    const saveBtn = document.getElementById('saveBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const getAcoustidKeyLink = document.getElementById('getAcoustidKeyLink');
+    const getApiKeyLink = document.getElementById('getApiKeyLink');
+    const getGeniusKeyLink = document.getElementById('getGeniusKeyLink');
+    const statusDiv = document.getElementById('status');
+    
+    async function loadSettings() {
+      const settings = await ipcRenderer.invoke('get-settings');
+      languageSelect.value = settings.language || 'en';
+      acoustidKeyInput.value = settings.acoustidApiKey || '';
+      lastfmKeyInput.value = settings.lastfmApiKey || '';
+      geniusKeyInput.value = settings.geniusApiKey || '';
+    }
+    
+    async function saveSettings() {
+      const settings = {
+        language: languageSelect.value,
+        acoustidApiKey: acoustidKeyInput.value.trim(),
+        lastfmApiKey: lastfmKeyInput.value.trim(),
+        geniusApiKey: geniusKeyInput.value.trim()
+      };
+      
+      const result = await ipcRenderer.invoke('save-settings', settings);
+      
+      if (result.success) {
+        statusDiv.textContent = '✓ Settings saved! Restarting app...';
+        statusDiv.className = 'status success';
+        
+        // Restart the app after 1 second
+        setTimeout(() => {
+          ipcRenderer.invoke('restart-app');
+        }, 1000);
+      } else {
+        statusDiv.textContent = '✗ Failed to save settings';
+        statusDiv.className = 'status error';
+      }
+    }
+    
+    getAcoustidKeyLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      require('electron').shell.openExternal('https://acoustid.org/new-application');
+    });
+    
+    getApiKeyLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      require('electron').shell.openExternal('https://www.last.fm/api/account/create');
+    });
+    
+    getGeniusKeyLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      require('electron').shell.openExternal('https://genius.com/api-clients');
+    });
+    
+    saveBtn.addEventListener('click', saveSettings);
+    cancelBtn.addEventListener('click', () => {
+      window.close();
+    });
+    
+    loadSettings();
+  </script>
+</body>
+</html>

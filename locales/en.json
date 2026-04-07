@@ -1,0 +1,114 @@
+{
+  "app": {
+    "title": "openPod Auto Tagger",
+    "settings": "Settings"
+  },
+  "sidebar": {
+    "selectFolder": "📁 Select Folder",
+    "refreshList": "🔄 Refresh List",
+    "totalFiles": "Total Files",
+    "tagged": "Tagged",
+    "untagged": "Untagged",
+    "tagAllUntagged": "🎵 Tag All Untagged",
+    "noFolderSelected": "No folder selected"
+  },
+  "fileList": {
+    "filename": "Filename",
+    "format": "Format",
+    "lyrics": "Lyrics",
+    "cover": "Cover",
+    "action": "Action",
+    "noFiles": "No audio files found in this folder",
+    "scanning": "Scanning files...",
+    "errorScanning": "Error scanning folder",
+    "checkingStatus": "Checking file status..."
+  },
+  "buttons": {
+    "identify": "🎵 Identify",
+    "identifying": "🔍 Scanning...",
+    "saving": "💾 Saving...",
+    "fetchLyrics": "🔍 Fetch Lyrics",
+    "saveToFile": "💾 Save to File",
+    "findCover": "🔍 Find Cover Art Online",
+    "replaceCover": "🖼️ Replace Cover Art",
+    "applyToAll": "📁 Apply to All Files in Folder",
+    "select": "Select",
+    "cancel": "Cancel",
+    "close": "✕ Close",
+    "saveSettings": "💾 Save Settings",
+    "language": "🌐 Language",
+    "search": "Search"
+   },
+  "details": {
+    "title": "File Details",
+    "loading": "Loading details...",
+    "error": "Error loading file details",
+    "noTags": "No tags found",
+    "lyricsAlready": "📝 Lyrics ✓ Already embedded",
+    "noCover": "No Cover Art",
+    "tags": {
+      "title": "Title",
+      "artist": "Artist",
+      "album": "Album",
+      "year": "Year",
+      "track": "Track Number",
+      "genre": "Genre"
+    }
+  },
+  "modal": {
+    "title": "🎵 Select the correct match",
+    "confidence": "Confidence",
+    "selectMatch": "Please select a match first"
+  },
+  "messages": {
+    "taggedSuccess": "✓ Tagged as:\n{title}\n{artist}\n{album}",
+    "tagFailed": "Failed: {error}",
+    "couldNotIdentify": "Could not identify.\n{error}",
+    "identifyError": "Error: {message}",
+    "coverAdded": "✓ Cover art added successfully from {source}! Refreshing...",
+    "coverError": "✗ {error}",
+    "coverApplyConfirm": "Apply the current cover art to ALL {count} audio files in this folder?\n\nThis will overwrite any existing cover art in these files.",
+    "coverApplySuccess": "✓ Cover art applied to all {count} files successfully!",
+    "coverApplyPartial": "⚠️ Applied to {success} files, failed on {fail} files.",
+    "lyricsFound": "✓ Lyrics found from {source}{synced}",
+    "lyricsAlreadyEmbedded": "✓ Lyrics already embedded in file",
+    "lyricsSaveSuccess": "✓ Lyrics saved to file successfully!",
+    "lyricsSaveFailed": "Failed to save lyrics: {error}",
+    "lyricsFetchError": "No lyrics found for this song",
+    "noArtistTitle": "This file has no artist or title tag. Please tag the file first.",
+    "settingsSaved": "✓ Settings saved successfully!",
+    "settingsSaveFailed": "✗ Failed to save settings",
+    "enterArtistAlbum": "Please enter both artist and album names",
+    "noCoverFound": "No cover art found for this artist/album",
+    "fetchCoverFirst": "Please fetch a cover art first by clicking \"Find Cover Art Online\" or \"Replace Cover Art\"",
+    "taggedAllSummary": "Tagged {success} out of {total} files successfully!",
+    "pleaseSelectMatch": "Please select a match first"
+  },
+  "placeholders": {
+    "artist": "Artist name",
+    "album": "Album name",
+    "enterArtist": "Enter your artist name",
+    "enterAlbum": "Enter your album name"
+  },
+  "status": {
+    "searchingCover": "🔍 Searching for cover art...",
+    "searchingLyrics": "🔍 Searching for lyrics...",
+    "applyingCover": "📦 Applying cover art to all files in folder...",
+    "lyricsFound": "✓ Lyrics found",
+    "lyricsNotFound": "✗ No lyrics found",
+    "present": "present",
+    "absent": "absent",
+    "checking": "Checking...",
+    "lyricsPresent": "Lyrics present",
+    "lyricsAbsent": "No lyrics",
+    "coverPresent": "Cover art present",
+    "coverAbsent": "No cover art"
+  },
+  "languages": {
+    "en": "English",
+    "tr": "Türkçe",
+    "de": "Deutsch",
+    "es": "Español",
+    "fr": "Français"
+  }
+}

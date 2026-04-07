@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=openPod Tagger
+Comment=Automatically tag MP3/FLAC files using acoustic fingerprinting
+Exec=openpod-tagger --no-sandbox %U
+Icon=openpod-tagger
+Terminal=false
+Type=Application
+Categories=Audio;Music;
+MimeType=audio/mpeg;audio/x-flac;
+StartupNotify=true

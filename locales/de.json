@@ -1,0 +1,40 @@
+{
+  "app": {
+    "title": "MusicBrainz Auto-Tagger",
+    "settings": "Einstellungen"
+  },
+  "sidebar": {
+    "selectFolder": "📁 Ordner auswählen",
+    "refreshList": "🔄 Liste aktualisieren",
+    "totalFiles": "Dateien insgesamt",
+    "tagged": "Getaggt",
+    "untagged": "Ungetaggt",
+    "tagAllUntagged": "🎵 Alle ungetaggten taggen"
+  },
+  "buttons": {
+    "identify": "🎵 Identifizieren",
+    "identifying": "🔍 Scannen...",
+    "saving": "💾 Speichern...",
+    "fetchLyrics": "🔍 Songtexte holen",
+    "saveToFile": "💾 In Datei speichern",
+    "findCover": "🔍 Coverbild suchen",
+    "replaceCover": "🖼️ Coverbild ersetzen",
+    "applyToAll": "📁 Auf alle Dateien anwenden",
+    "select": "Auswählen",
+    "cancel": "Abbrechen",
+    "close": "✕ Schließen",
+    "saveSettings": "💾 Einstellungen speichern",
+    "language": "🌐 Sprache"
+  },
+  "messages": {
+    "taggedSuccess": "✓ Erfolgreich getaggt als:\n{title}\n{artist}\n{album}",
+    "settingsSaved": "✓ Einstellungen erfolgreich gespeichert!"
+  },
+  "languages": {
+    "en": "English",
+    "tr": "Türkçe",
+    "de": "Deutsch",
+    "es": "Español",
+    "fr": "Français"
+  }
+}

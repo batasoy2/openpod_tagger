@@ -1,0 +1,12 @@
+#!/bin/bash
+# openPod Tagger wrapper script to handle sandbox issues
+
+# Check if fpcalc is installed (required for acoustic fingerprinting)
+if ! command -v fpcalc &> /dev/null; then
+    echo "Installing libchromaprint-tools for acoustic fingerprinting..."
+    sudo apt-get update
+    sudo apt-get install -y libchromaprint-tools
+fi
+
+# Launch the real executable with --no-sandbox
+exec /opt/openPod/openpod-tagger --no-sandbox "$@"

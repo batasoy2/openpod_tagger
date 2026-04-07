@@ -1,0 +1,22 @@
+#!/bin/bash
+# postinst script for openPod Tagger DEB package
+
+set -e
+
+# Check for fpcalc and install if missing
+if ! command -v fpcalc &> /dev/null; then
+    echo "Installing libchromaprint-tools for acoustic fingerprinting..."
+    apt-get update
+    apt-get install -y libchromaprint-tools || true
+fi
+
+# Ensure wrapper script is executable
+chmod +x /usr/bin/openpod-tagger 2>/dev/null || true
+
+# Fix sandbox permissions if needed
+if [ -f "/opt/openPod/chrome-sandbox" ]; then
+    chown root:root /opt/openPod/chrome-sandbox 2>/dev/null || true
+    chmod 4755 /opt/openPod/chrome-sandbox 2>/dev/null || true
+fi
+
+exit 0

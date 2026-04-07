@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>openPod Auto Tagger</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+      background: #f5f5f5;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    
+    .sidebar {
+      width: 300px;
+      background: #2c3e50;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .file-list-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .modal-match-item {
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-match-item:hover {
+  background: #e3f2fd;
+  border-color: #2196f3;
+}
+
+.modal-match-item.selected {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  border-width: 2px;
+}
+
+.modal-match-title {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.modal-match-artist {
+  color: #7f8c8d;
+  font-size: 12px;
+}
+
+.modal-match-album {
+  color: #7f8c8d;
+  font-size: 12px;
+}
+
+.modal-match-score {
+  color: #27ae60;
+  font-size: 11px;
+  margin-top: 5px;
+}
+    .details-panel {
+      background: white;
+      border-top: 2px solid #3498db;
+      padding: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+      display: none;
+    }
+    
+    .details-panel.show {
+      display: block;
+    }
+    
+    .folder-selector {
+      margin-bottom: 30px;
+    }
+    
+    .folder-selector button {
+      width: 100%;
+      padding: 12px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    
+    .folder-selector button:hover {
+      background: #2980b9;
+    }
+    
+    .folder-path {
+      background: #34495e;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      word-wrap: break-word;
+    }
+    
+    .stats {
+      margin-top: 20px;
+      padding: 15px;
+      background: #34495e;
+      border-radius: 5px;
+    }
+    
+    .stat-item {
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    
+    .stat-label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .action-buttons {
+      margin-top: auto;
+      margin-bottom: 20px;
+    }
+    
+    .action-buttons button {
+      width: 100%;
+      padding: 12px;
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    
+    .action-buttons button:hover {
+      background: #229954;
+    }
+    
+    .action-buttons button:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+    }
+    
+    .file-list {
+      background: white;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    
+    .file-header {
+      display: grid;
+      grid-template-columns: 2fr 1fr 0.8fr 0.8fr 1.2fr;
+      background: #34495e;
+      color: white;
+      padding: 12px;
+      font-weight: bold;
+    }
+    
+    .file-item {
+      display: grid;
+      grid-template-columns: 2fr 1fr 0.8fr 0.8fr 1.2fr;
+      padding: 10px 12px;
+      border-bottom: 1px solid #e0e0e0;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .file-item:hover {
+      background: #f0f0f0;
+    }
+    
+    .file-item.selected {
+      background: #e3f2fd;
+      border-left: 3px solid #2196f3;
+    }
+    
+    .status-tagged {
+      color: #27ae60;
+      font-weight: bold;
+    }
+    
+    .status-untagged {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+    
+    .status-icon {
+      font-size: 18px;
+      text-align: center;
+    }
+    
+    .status-icon.success {
+      color: #27ae60;
+    }
+    
+    .status-icon.error {
+      color: #e74c3c;
+    }
+    
+    .tag-button {
+      padding: 5px 10px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+      margin: 2px;
+    }
+    
+    .tag-button:hover {
+      background: #2980b9;
+    }
+    
+    .tag-button:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #7f8c8d;
+    }
+    
+    .progress {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #34495e;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: none;
+    }
+    
+    .details-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #3498db;
+    }
+    
+    .details-header h3 {
+      color: #2c3e50;
+    }
+    
+    .close-details {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    
+    .close-details:hover {
+      background: #c0392b;
+    }
+    
+    .details-content {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .cover-art {
+      flex-shrink: 0;
+      width: 200px;
+      text-align: center;
+    }
+    
+    .cover-art img {
+      max-width: 100%;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .cover-art .no-cover {
+      width: 200px;
+      height: 200px;
+      background: #ecf0f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 5px;
+      color: #7f8c8d;
+      font-size: 14px;
+    }
+    
+    .tags-table {
+      flex: 1;
+      min-width: 250px;
+    }
+    
+    .tag-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      padding: 8px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .tag-label {
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    
+    .tag-value {
+      color: #34495e;
+      word-break: break-word;
+    }
+    
+    .no-tags {
+      text-align: center;
+      color: #7f8c8d;
+      padding: 40px;
+    }
+    
+    .fetch-cover-btn {
+      background: #9b59b6;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 12px;
+      transition: background 0.2s;
+    }
+    
+    .fetch-cover-btn:hover {
+      background: #8e44ad;
+    }
+    
+    .fetch-cover-btn:disabled {
+      background: #bdc3c7;
+      cursor: not-allowed;
+    }
+    
+    .cover-art-container {
+      position: relative;
+    }
+    
+    .cover-actions {
+      margin-top: 10px;
+      text-align: center;
+    }
+    
+    .cover-status {
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 5px;
+      font-size: 12px;
+      text-align: center;
+    }
+    
+    .cover-status.success {
+      background: #d5f4e6;
+      color: #27ae60;
+    }
+    
+    .cover-status.error {
+      background: #fadbd8;
+      color: #e74c3c;
+    }
+    
+    .cover-status.info {
+      background: #d6eaf8;
+      color: #2980b9;
+    }
+    
+    .artist-album-input {
+      margin-top: 15px;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 5px;
+      display: none;
+    }
+    
+    .artist-album-input input {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 8px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      font-size: 12px;
+    }
+    
+    .artist-album-input label {
+      font-size: 12px;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 4px;
+      color: #2c3e50;
+    }
+    
+    .lyrics-section {
+      margin-top: 20px;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 15px;
+    }
+    
+    .fetch-lyrics-btn {
+      background: #e67e22;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    .fetch-lyrics-btn:hover {
+      background: #d35400;
+    }
+    
+    .lyrics-content {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <script>
+// i18n setup - Add at the VERY TOP of your script
+const i18n = require('./i18n.js');
+const { t, setLocale, getCurrentLocale } = i18n;
+
+// Function to update all UI text
+function updateUIText() {
+  // Update static elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (key) {
+      el.textContent = t(key);
+    }
+  });
+  
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (key) {
+      el.placeholder = t(key);
+    }
+  });
+  
+  document.title = t('app.title');
+  
+  // Update file headers
+  const headers = document.querySelectorAll('.file-header div');
+  if (headers.length >= 5) {
+    headers[0].textContent = t('fileList.filename');
+    headers[1].textContent = t('fileList.format');
+    headers[2].textContent = t('fileList.lyrics');
+    headers[3].textContent = t('fileList.cover');
+    headers[4].textContent = t('fileList.action');
+  }
+  
+  // Update sidebar buttons
+  const selectBtn = document.getElementById('selectFolderBtn');
+  if (selectBtn) selectBtn.textContent = t('sidebar.selectFolder');
+  
+  const refreshBtn = document.getElementById('refreshBtn');
+  if (refreshBtn) refreshBtn.textContent = t('sidebar.refreshList');
+  
+  const tagAllBtn = document.getElementById('tagAllBtn');
+  if (tagAllBtn) tagAllBtn.textContent = t('sidebar.tagAllUntagged');
+  
+  // Update stats labels
+  const statLabels = document.querySelectorAll('.stat-label');
+  if (statLabels.length >= 3) {
+    statLabels[0].textContent = t('sidebar.totalFiles');
+    statLabels[1].textContent = t('sidebar.tagged');
+    statLabels[2].textContent = t('sidebar.untagged');
+  }
+  
+  // Update details panel
+  const detailsTitle = document.querySelector('.details-header h3');
+  if (detailsTitle) detailsTitle.textContent = t('details.title');
+  
+  const closeBtn = document.getElementById('closeDetailsBtn');
+  if (closeBtn) closeBtn.textContent = t('buttons.close');
+  
+  // Update modal
+  const modalTitle = document.querySelector('#selectionModal h3');
+  if (modalTitle) modalTitle.textContent = t('modal.title');
+  
+  const selectModalBtn = document.getElementById('modalSelectBtn');
+  if (selectModalBtn) selectModalBtn.textContent = t('buttons.select');
+  
+  const cancelModalBtn = document.getElementById('modalCancelBtn');
+  if (cancelModalBtn) cancelModalBtn.textContent = t('buttons.cancel');
+  
+  // If details panel is open, refresh it to update button texts
+  if (detailsPanel && detailsPanel.classList.contains('show') && window.currentFile) {
+    showFileDetails(window.currentFile);
+  }
+}
+
+// Load saved language
+async function loadLanguage() {
+  try {
+    const settings = await ipcRenderer.invoke('get-settings');
+    if (settings && settings.language) {
+      setLocale(settings.language);
+      updateUIText();
+    }
+  } catch (error) {
+    console.error('Failed to load language:', error);
+  }
+}
+
+// Call after DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  loadLanguage();
+});
+
+  </script>
+
+  <div class="container">
+    <div class="sidebar">
+      <div class="folder-selector">
+        <button id="selectFolderBtn" data-i18n="sidebar.selectFolder">📁 Select Folder</button>
+  
+ <div class="folder-path" id="folderPath" data-i18n="sidebar.noFolderSelected">No folder selected</div>
+      </div>
+      
+      <div class="stats" id="stats" style="display: none;">
+        <div class="stat-item">
+          <div class="stat-label">Total Files</div>
+          <div class="stat-value" id="totalFiles">0</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Tagged</div>
+          <div class="stat-value" id="taggedFiles">0</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-label">Untagged</div>
+          <div class="stat-value" id="untaggedFiles">0</div>
+        </div>
+      </div>
+      
+   
+    </div>
+    
+    <div class="content">
+      <div class="file-list-container">
+        <div class="file-list">
+          <div class="file-header">
+            <div>Filename</div>
+            <div>Format</div>
+            <div>Lyrics</div>
+            <div>Cover</div>
+            <div>Action</div>
+          </div>
+          <div id="fileList"></div>
+        </div>
+      </div>
+      
+      <div class="details-panel" id="detailsPanel">
+        <div class="details-header">
+          <h3>File Details</h3>
+          <button class="close-details" id="closeDetailsBtn">✕ Close</button>
+        </div>
+        <div id="detailsContent"></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="progress" id="progress">
+    Processing...
+  </div>
+  
+<!-- Selection Modal -->
+<div id="selectionModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+  <div style="background: white; border-radius: 10px; padding: 20px; max-width: 500px; max-height: 80%; overflow-y: auto; margin: 20px;">
+    <h3 style="margin-bottom: 15px; color: #2c3e50;" data-i18n="modal.title">🎵 Select the correct match</h3>
+    <div id="modalMatches"></div>
+    <div style="margin-top: 15px; display: flex; justify-content: flex-end; gap: 10px;">
+      <button id="modalSelectBtn" data-i18n="buttons.select" style="background: #27ae60; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">Select</button>
+      <button id="modalCancelBtn" data-i18n="buttons.cancel" style="background: #95a5a6; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+  <script>
+
+   
+ 
+
+
+    const { ipcRenderer } = require('electron');
+    
+    let currentFolder = null;
+    let currentFiles = [];
+    let selectedFile = null;
+    let lastFetchedCoverData = null;
+    let lastFetchedCoverFormat = null;
+    let currentLyrics = null;
+    let currentLyricsSynced = false;
+ // Modal functions
+let currentMatches = [];
+let selectedMatchIndex = -1;
+    // DOM elements
+    const selectFolderBtn = document.getElementById('selectFolderBtn');
+ 
+    const folderPathDiv = document.getElementById('folderPath');
+    const statsDiv = document.getElementById('stats');
+    const totalFilesSpan = document.getElementById('totalFiles');
+    const taggedFilesSpan = document.getElementById('taggedFiles');
+    const untaggedFilesSpan = document.getElementById('untaggedFiles');
+   
+    const fileListDiv = document.getElementById('fileList');
+    const progressDiv = document.getElementById('progress');
+    const detailsPanel = document.getElementById('detailsPanel');
+    const detailsContent = document.getElementById('detailsContent');
+    const closeDetailsBtn = document.getElementById('closeDetailsBtn');
+    
+    selectFolderBtn.addEventListener('click', async () => {
+      const folder = await ipcRenderer.invoke('select-folder');
+      if (folder) {
+        currentFolder = folder;
+        folderPathDiv.textContent = folder;
+        await scanFolder();
+      }
+    });
+    
+  
+    
+    // Modal select button
+document.getElementById('modalSelectBtn').addEventListener('click', () => {
+  if (selectedMatchIndex >= 0 && window.modalCallback) {
+    const selectedMatch = currentMatches[selectedMatchIndex];
+    window.modalCallback(selectedMatch);
+    closeModal();
+  } else {
+    alert('Please select a match first');
+  }
+});
+
+ 
+    
+    closeDetailsBtn.addEventListener('click', () => {
+      detailsPanel.classList.remove('show');
+      selectedFile = null;
+    });
+    
+async function scanFolder() {
+  console.log('Starting scan...');
+  fileListDiv.innerHTML = `<div class="loading">${t('fileList.scanning')}</div>`;
+  detailsPanel.classList.remove('show');
+  
+  try {
+    const files = await ipcRenderer.invoke('scan-folder', currentFolder);
+    console.log('Files received:', files.length);
+    
+    // Initialize with unknown status
+    for (let i = 0; i < files.length; i++) {
+      files[i].hasLyrics = null;
+      files[i].hasCoverArt = null;
+    }
+    
+    currentFiles = files;
+    updateStats(files);
+    renderFileList(files);
+    
+    // Check status in background without blocking UI
+    const checkPromises = files.map(async (file) => {
+      try {
+        const details = await ipcRenderer.invoke('get-file-details', file.path);
+        file.hasLyrics = details.hasLyrics === true;
+        file.hasCoverArt = !!details.coverArt;
+        if (details.tags && (details.tags.title || details.tags.artist)) {
+          file.hasTags = true;
+        }
+      } catch (error) {
+        file.hasLyrics = false;
+        file.hasCoverArt = false;
+      }
+      return file;
+    });
+    
+    // Wait for all checks to complete
+    const updatedFiles = await Promise.all(checkPromises);
+    currentFiles = updatedFiles;
+    
+    // Update the display
+    renderFileList(currentFiles);
+    updateStats(currentFiles);
+    
+    console.log('Scan and status check complete');
+    
+  } catch (error) {
+    console.error('Scan error:', error);
+    fileListDiv.innerHTML = `<div class="loading">${t('fileList.errorScanning')}</div>`;
+  }
+}
+  
+    function updateStats(files) {
+      const total = files.length;
+      const tagged = files.filter(f => f.hasTags).length;
+      const untagged = total - tagged;
+      
+      totalFilesSpan.textContent = total;
+      taggedFilesSpan.textContent = tagged;
+      untaggedFilesSpan.textContent = untagged;
+      
+      statsDiv.style.display = 'block';
+     
+    }
+    
+    async function showFileDetails(file) {
+      detailsContent.innerHTML = '<div class="loading">Loading details...</div>';
+      detailsPanel.classList.add('show');
+      
+      try {
+        const details = await ipcRenderer.invoke('get-file-details', file.path);
+        
+        if (details.success) {
+          renderDetails(details, file);
+          // Update the file's status in the list
+          file.hasLyrics = details.hasLyrics === true;
+          file.hasCoverArt = !!details.coverArt;
+          renderFileList(currentFiles);
+        } else {
+          detailsContent.innerHTML = '<div class="no-tags">Could not read file details</div>';
+        }
+      } catch (error) {
+        console.error('Error loading details:', error);
+        detailsContent.innerHTML = '<div class="no-tags">Error loading file details</div>';
+      }
+    }
+    
+    function renderDetails(details, file) {
+      const tags = details.tags;
+      const coverArt = details.coverArt;
+      const filePath = file.path;
+      const hasLyrics = details.hasLyrics === true;
+      
+      // Build cover art HTML with translation attributes
+let coverHtml = '';
+if (coverArt) {
+  coverHtml = `
+    <div class="cover-art-container">
+      <img src="${coverArt}" alt="Cover Art">
+      <div class="cover-actions">
+        <button class="fetch-cover-btn" data-i18n="buttons.replaceCover" onclick="window.fetchCoverArtForFile()">🖼️ Replace Cover Art</button>
+        <button class="fetch-cover-btn" data-i18n="buttons.applyToAll" onclick="window.applyCoverToAllFiles()" style="background: #27ae60;">📁 Apply to All Files in Folder</button>
+      </div>
+    </div>
+  `;
+} else {
+  coverHtml = `
+    <div class="cover-art-container">
+      <div class="no-cover" data-i18n="details.noCover">No Cover Art</div>
+      <div class="cover-actions">
+        <button class="fetch-cover-btn" data-i18n="buttons.findCover" onclick="window.fetchCoverArtForFile()">🔍 Find Cover Art Online</button>
+      </div>
+      <div class="artist-album-input" id="manualCoverInput" style="display: none;">
+        <label data-i18n="placeholders.artist">Artist:</label>
+        <input type="text" id="manualArtist" data-i18n-placeholder="placeholders.enterArtist" placeholder="Artist name" value="${escapeHtml(tags.artist || '')}">
+        <label data-i18n="placeholders.album">Album:</label>
+        <input type="text" id="manualAlbum" data-i18n-placeholder="placeholders.enterAlbum" placeholder="Album name" value="${escapeHtml(tags.album || '')}">
+        <button class="fetch-cover-btn" data-i18n="buttons.search" onclick="window.searchWithManualInput()">Search</button>
+      </div>
+      <div id="coverStatus"></div>
+    </div>
+  `;
+}
+      
+      // Build tags HTML
+      let tagsHtml = '';
+      if (Object.keys(tags).length === 0) {
+        tagsHtml = '<div class="no-tags">No tags found</div>';
+      } else {
+        const tagMappings = {
+          'title': 'Title',
+          'artist': 'Artist',
+          'album': 'Album',
+          'year': 'Year',
+          'track': 'Track Number',
+          'genre': 'Genre'
+        };
+        
+        for (const [key, label] of Object.entries(tagMappings)) {
+          if (tags[key] && tags[key] !== '') {
+            tagsHtml += `
+              <div class="tag-row">
+                <div class="tag-label">${label}:</div>
+                <div class="tag-value">${escapeHtml(String(tags[key]))}</div>
+              </div>
+            `;
+          }
+        }
+      }
+      
+     // Build lyrics section HTML
+let lyricsHtml = '';
+if (!hasLyrics && tags.title && tags.artist) {
+  lyricsHtml = `
+    <div class="lyrics-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h4 style="color: #2c3e50;">📝 <span data-i18n="details.lyrics">Lyrics</span></h4>
+        <button class="fetch-lyrics-btn" data-i18n="buttons.fetchLyrics" onclick="window.fetchAndDisplayLyrics()">🔍 Fetch Lyrics</button>
+      </div>
+      <div id="lyricsContent" class="lyrics-content"></div>
+    </div>
+  `;
+} else if (hasLyrics) {
+  lyricsHtml = `
+    <div class="lyrics-section">
+      <div style="margin-bottom: 10px;">
+        <h4 style="color: #27ae60;">📝 <span data-i18n="details.lyricsAlready">Lyrics ✓ Already embedded</span></h4>
+      </div>
+    </div>
+  `;
+}
+      
+      detailsContent.innerHTML = `
+        <div class="details-content">
+          <div class="cover-art">
+            ${coverHtml}
+          </div>
+          <div class="tags-table">
+            ${tagsHtml}
+            ${lyricsHtml}
+          </div>
+        </div>
+      `;
+      
+      window.currentFilePath = filePath;
+      window.currentTags = tags;
+      window.currentFile = file;
+    }
+    
+    window.fetchCoverArtForFile = async function() {
+      const statusDiv = document.getElementById('coverStatus');
+      if (!statusDiv) return;
+      
+      statusDiv.innerHTML = '<div class="cover-status info">🔍 Searching for cover art...</div>';
+      
+      try {
+        const result = await ipcRenderer.invoke('fetch-cover-art', window.currentFilePath, window.currentTags);
+        
+        if (result.success) {
+          lastFetchedCoverData = result.coverData;
+          lastFetchedCoverFormat = result.coverFormat;
+          
+          statusDiv.innerHTML = `<div class="cover-status success">✓ Cover art added successfully from ${result.source}! Refreshing...</div>`;
+          setTimeout(async () => {
+            const updatedDetails = await ipcRenderer.invoke('get-file-details', window.currentFilePath);
+            if (updatedDetails.success) {
+              renderDetails(updatedDetails, window.currentFile);
+              await scanFolder();
+            }
+          }, 1500);
+        } else {
+          const manualInput = document.getElementById('manualCoverInput');
+          if (manualInput) {
+            manualInput.style.display = 'block';
+          }
+          statusDiv.innerHTML = `<div class="cover-status error">✗ ${result.error}</div>`;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        statusDiv.innerHTML = `<div class="cover-status error">✗ Error: ${error.message}</div>`;
+      }
+    };
+    
+    window.applyCoverToAllFiles = async function() {
+      if (!lastFetchedCoverData) {
+        alert('Please fetch a cover art first by clicking "Find Cover Art Online" or "Replace Cover Art"');
+        return;
+      }
+      
+      const confirmMessage = `Apply the current cover art to ALL ${currentFiles.length} audio files in this folder?\n\nThis will overwrite any existing cover art in these files.`;
+      
+      if (!confirm(confirmMessage)) {
+        return;
+      }
+      
+      const statusDiv = document.getElementById('coverStatus');
+      if (statusDiv) {
+        statusDiv.innerHTML = '<div class="cover-status info">📦 Applying cover art to all files in folder...</div>';
+      }
+      
+      try {
+        const results = await ipcRenderer.invoke('apply-cover-to-all', currentFolder, lastFetchedCoverData, lastFetchedCoverFormat);
+        
+        const successCount = results.filter(r => r.success).length;
+        const failCount = results.length - successCount;
+        
+        if (statusDiv) {
+          if (failCount === 0) {
+            statusDiv.innerHTML = `<div class="cover-status success">✓ Cover art applied to all ${successCount} files successfully!</div>`;
+          } else {
+            statusDiv.innerHTML = `<div class="cover-status error">⚠️ Applied to ${successCount} files, failed on ${failCount} files.</div>`;
+          }
+        }
+        
+        const updatedDetails = await ipcRenderer.invoke('get-file-details', window.currentFilePath);
+        if (updatedDetails.success) {
+          renderDetails(updatedDetails, window.currentFile);
+          await scanFolder();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        if (statusDiv) {
+          statusDiv.innerHTML = `<div class="cover-status error">✗ Error: ${error.message}</div>`;
+        }
+      }
+    };
+    
+    window.searchWithManualInput = async function() {
+      const artist = document.getElementById('manualArtist').value;
+      const album = document.getElementById('manualAlbum').value;
+      const statusDiv = document.getElementById('coverStatus');
+      
+      if (!artist || !album) {
+        statusDiv.innerHTML = '<div class="cover-status error">Please enter both artist and album names</div>';
+        return;
+      }
+      
+      statusDiv.innerHTML = '<div class="cover-status info">Searching for cover art...</div>';
+      
+      const result = await ipcRenderer.invoke('fetch-cover-art', window.currentFilePath, { artist, album });
+      
+      if (result.success) {
+        lastFetchedCoverData = result.coverData;
+        lastFetchedCoverFormat = result.coverFormat;
+        
+        statusDiv.innerHTML = `<div class="cover-status success">✓ Cover art added successfully from ${result.source}!</div>`;
+        setTimeout(async () => {
+          const updatedDetails = await ipcRenderer.invoke('get-file-details', window.currentFilePath);
+          if (updatedDetails.success) {
+            renderDetails(updatedDetails, window.currentFile);
+            await scanFolder();
+          }
+        }, 2000);
+      } else {
+        statusDiv.innerHTML = '<div class="cover-status error">No cover art found for this artist/album</div>';
+      }
+    };
+    
+    window.fetchAndDisplayLyrics = async function() {
+      const lyricsContent = document.getElementById('lyricsContent');
+      if (!lyricsContent) return;
+      
+      const artist = window.currentTags.artist;
+      const title = window.currentTags.title;
+      
+      if (!artist || !title) {
+        lyricsContent.style.display = 'block';
+        lyricsContent.innerHTML = '<div class="cover-status error">This file has no artist or title tag. Please tag the file first.</div>';
+        return;
+      }
+      
+      lyricsContent.style.display = 'block';
+      lyricsContent.innerHTML = '<div class="cover-status info">🔍 Searching for lyrics...</div>';
+      
+      try {
+        const result = await ipcRenderer.invoke('fetch-lyrics', artist, title);
+        
+        if (result.success) {
+          currentLyrics = result.lyrics;
+          currentLyricsSynced = result.synced;
+          
+          lyricsContent.innerHTML = `
+            <div style="margin-bottom: 10px;">
+              <span class="cover-status success">✓ Lyrics found from ${result.source}${result.synced ? ' (Synchronized)' : ''}</span>
+              <button onclick="window.saveLyricsToFile()" style="background: #27ae60; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; margin-left: 10px;">💾 Save to File</button>
+            </div>
+            <div style="white-space: pre-wrap; font-family: monospace; font-size: 12px; line-height: 1.5;">
+              ${escapeHtml(result.lyrics)}
+            </div>
+          `;
+        } else {
+          lyricsContent.innerHTML = `<div class="cover-status error">✗ ${result.error}</div>`;
+        }
+      } catch (error) {
+        lyricsContent.innerHTML = `<div class="cover-status error">✗ Error: ${error.message}</div>`;
+      }
+    };
+    
+    window.saveLyricsToFile = async function() {
+      if (!currentLyrics) {
+        alert('No lyrics to save. Please fetch lyrics first.');
+        return;
+      }
+      
+      const saveBtn = document.querySelector('#lyricsContent button');
+      if (saveBtn) {
+        saveBtn.disabled = true;
+        saveBtn.textContent = '💾 Saving...';
+      }
+      
+      try {
+        const result = await ipcRenderer.invoke('write-lyrics-to-file', window.currentFilePath, currentLyrics, currentLyricsSynced);
+        
+        if (result.success) {
+          const lyricsContent = document.getElementById('lyricsContent');
+          if (lyricsContent) {
+            lyricsContent.innerHTML = `
+              <div class="cover-status success">✓ Lyrics saved to file successfully!</div>
+              <div style="white-space: pre-wrap; font-family: monospace; font-size: 12px; line-height: 1.5; margin-top: 10px;">
+                ${escapeHtml(currentLyrics)}
+              </div>
+            `;
+          }
+          
+          await scanFolder();
+          
+          const updatedDetails = await ipcRenderer.invoke('get-file-details', window.currentFilePath);
+          if (updatedDetails.success) {
+            renderDetails(updatedDetails, window.currentFile);
+          }
+        } else {
+          alert(`Failed to save lyrics: ${result.error}`);
+          if (saveBtn) {
+            saveBtn.disabled = false;
+            saveBtn.textContent = '💾 Save to File';
+          }
+        }
+      } catch (error) {
+        console.error('Error saving lyrics:', error);
+        alert(`Error saving lyrics: ${error.message}`);
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.textContent = '💾 Save to File';
+        }
+      }
+    };
+    
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+
+    
+
+function renderFileList(files) {
+  if (!files || files.length === 0) {
+    fileListDiv.innerHTML = '<div class="loading">No audio files found in this folder</div>';
+    return;
+  }
+  
+  fileListDiv.innerHTML = '';
+  
+  for (let i = 0; i < files.length; i++) {
+    const currentFile = files[i];
+    
+    const fileItem = document.createElement('div');
+    fileItem.className = 'file-item';
+    if (selectedFile && selectedFile.path === currentFile.path) {
+      fileItem.classList.add('selected');
+    }
+    
+    fileItem.onclick = (e) => {
+      if (e.target.classList && e.target.classList.contains('tag-button')) {
+        return;
+      }
+      
+      document.querySelectorAll('.file-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+      
+      fileItem.classList.add('selected');
+      selectedFile = currentFile;
+      showFileDetails(currentFile);
+    };
+    
+    const nameDiv = document.createElement('div');
+    nameDiv.textContent = currentFile.name;
+    
+    const formatDiv = document.createElement('div');
+    formatDiv.textContent = currentFile.format.toUpperCase();
+    
+    const lyricsDiv = document.createElement('div');
+    lyricsDiv.className = 'status-icon';
+    if (currentFile.hasLyrics === true) {
+      lyricsDiv.innerHTML = '✓';
+      lyricsDiv.classList.add('success');
+      lyricsDiv.title = 'Lyrics present';
+    } else {
+      lyricsDiv.innerHTML = '✗';
+      lyricsDiv.classList.add('error');
+      lyricsDiv.title = 'No lyrics';
+    }
+    
+    const coverDiv = document.createElement('div');
+    coverDiv.className = 'status-icon';
+    if (currentFile.hasCoverArt === true) {
+      coverDiv.innerHTML = '✓';
+      coverDiv.classList.add('success');
+      coverDiv.title = 'Cover art present';
+    } else {
+      coverDiv.innerHTML = '✗';
+      coverDiv.classList.add('error');
+      coverDiv.title = 'No cover art';
+    }
+    
+    const actionDiv = document.createElement('div');
+    
+    if (!currentFile.hasTags) {
+      const acousticBtn = document.createElement('button');
+      acousticBtn.textContent = '🎵 Identify';
+      acousticBtn.className = 'tag-button';
+      acousticBtn.style.background = '#9b59b6';
+      acousticBtn.onclick = async (e) => {
+        e.stopPropagation();
+        acousticBtn.disabled = true;
+        acousticBtn.textContent = '🔍 Scanning...';
+        
+        try {
+          const result = await ipcRenderer.invoke('identify-file-acoustic', currentFile.path);
+          
+          if (result.success && result.matches && result.matches.length > 0) {
+            showSelectionModal(result.matches, async (selectedMatch) => {
+              if (selectedMatch) {
+                const tagResult = await ipcRenderer.invoke('tag-file-with-selection', currentFile.path, selectedMatch);
+                
+                if (tagResult.success) {
+                  alert(`✓ Tagged as:\n${selectedMatch.title}\n${selectedMatch.artist}\n${selectedMatch.album}`);
+                  await scanFolder();
+                  if (selectedFile && selectedFile.path === currentFile.path) {
+                    await showFileDetails(currentFile);
+                  }
+                } else {
+                  alert(`Failed: ${tagResult.error}`);
+                }
+              }
+              acousticBtn.disabled = false;
+              acousticBtn.textContent = '🎵 Identify';
+            });
+          } else {
+            alert(`Could not identify.\n${result.error || 'No matches'}`);
+            acousticBtn.disabled = false;
+            acousticBtn.textContent = '🎵 Identify';
+          }
+        } catch (error) {
+          alert(`Error: ${error.message}`);
+          acousticBtn.disabled = false;
+          acousticBtn.textContent = '🎵 Identify';
+        }
+      };
+      actionDiv.appendChild(acousticBtn);
+    }
+    
+    fileItem.appendChild(nameDiv);
+    fileItem.appendChild(formatDiv);
+    fileItem.appendChild(lyricsDiv);
+    fileItem.appendChild(coverDiv);
+    fileItem.appendChild(actionDiv);
+    
+    fileListDiv.appendChild(fileItem);
+  }
+}
+
+
+acousticBtn.onclick = async (e) => {
+  e.stopPropagation();
+  acousticBtn.disabled = true;
+  acousticBtn.textContent = '🔍 Scanning...';
+  
+  try {
+    const result = await ipcRenderer.invoke('identify-file-acoustic', currentFile.path);
+    
+    if (result.success && result.matches && result.matches.length > 0) {
+      showSelectionModal(result.matches, async (selectedMatch) => {
+        if (selectedMatch) {
+          console.log('Selected match:', selectedMatch);
+          
+          // Show saving indicator
+          acousticBtn.textContent = '💾 Saving...';
+          
+          const tagResult = await ipcRenderer.invoke('tag-file-with-selection', currentFile.path, selectedMatch);
+          
+          if (tagResult.success) {
+            alert(`✓ Successfully tagged!\n\nTitle: ${selectedMatch.title}\nArtist: ${selectedMatch.artist}\nAlbum: ${selectedMatch.album}`);
+            await scanFolder();
+            if (selectedFile && selectedFile.path === currentFile.path) {
+              await showFileDetails(currentFile);
+            }
+          } else {
+            alert(`Failed to tag: ${tagResult.error}`);
+          }
+        }
+        acousticBtn.disabled = false;
+        acousticBtn.textContent = '🎵 Identify';
+      });
+    } else {
+      alert(`Could not identify.\n${result.error || 'No matches'}`);
+      acousticBtn.disabled = false;
+      acousticBtn.textContent = '🎵 Identify';
+    }
+  } catch (error) {
+    alert(`Error: ${error.message}`);
+    acousticBtn.disabled = false;
+    acousticBtn.textContent = '🎵 Identify';
+  }
+};
+
+
+function showSelectionModal(matches, callback) {
+  currentMatches = matches;
+  selectedMatchIndex = -1;
+  
+  const modal = document.getElementById('selectionModal');
+  const modalMatches = document.getElementById('modalMatches');
+  
+  if (!modal || !modalMatches) {
+    console.error('Modal elements not found');
+    return;
+  }
+  
+  modalMatches.innerHTML = '';
+  
+  matches.forEach((match, idx) => {
+    const scorePercent = Math.round(match.score * 100);
+    const matchDiv = document.createElement('div');
+    matchDiv.className = 'modal-match-item';
+    matchDiv.setAttribute('data-index', idx);
+    matchDiv.innerHTML = `
+      <div class="modal-match-title">${escapeHtml(match.title)}</div>
+      <div class="modal-match-artist">${escapeHtml(match.artist)}</div>
+      <div class="modal-match-album">${escapeHtml(match.album)}</div>
+      <div class="modal-match-score">Confidence: ${scorePercent}%</div>
+    `;
+    matchDiv.onclick = () => {
+      document.querySelectorAll('.modal-match-item').forEach(item => {
+        item.classList.remove('selected');
+      });
+      matchDiv.classList.add('selected');
+      selectedMatchIndex = idx;
+    };
+    modalMatches.appendChild(matchDiv);
+  });
+  
+  modal.style.display = 'flex';
+  window.modalCallback = callback;
+}
+
+function closeModal() {
+  const modal = document.getElementById('selectionModal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+  selectedMatchIndex = -1;
+  window.modalCallback = null;
+}
+
+
+// Modal button event listeners - ADD THESE AFTER DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+  const selectBtn = document.getElementById('modalSelectBtn');
+  const cancelBtn = document.getElementById('modalCancelBtn');
+  
+  if (selectBtn) {
+    selectBtn.addEventListener('click', () => {
+      if (selectedMatchIndex >= 0 && window.modalCallback) {
+        const selectedMatch = currentMatches[selectedMatchIndex];
+        window.modalCallback(selectedMatch);
+        closeModal();
+      } else {
+        alert('Please select a match first');
+      }
+    });
+  }
+  
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      closeModal();
+      if (window.modalCallback) {
+        window.modalCallback(null);
+        window.modalCallback = null;
+      }
+    });
+  }
+  
+  // Close modal when clicking outside
+  const modal = document.getElementById('selectionModal');
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeModal();
+        if (window.modalCallback) {
+          window.modalCallback(null);
+          window.modalCallback = null;
+        }
+      }
+    });
+  }
+});
+
+
+// Add event listener for cancel button
+document.getElementById('modalCancelBtn').addEventListener('click', () => {
+  closeModal();
+  if (window.modalCallback) {
+    window.modalCallback(null);
+    window.modalCallback = null;
+  }
+});
+
+ 
+ 
+
+  </script>
+</body>
+</html>

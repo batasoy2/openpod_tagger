@@ -1,0 +1,114 @@
+{
+  "app": {
+    "title": "openPod Otomatik Etiketleyici",
+    "settings": "Ayarlar"
+  },
+  "sidebar": {
+    "selectFolder": "📁 Klasör Seç",
+    "refreshList": "🔄 Listeyi Yenile",
+    "totalFiles": "Toplam Dosya",
+    "tagged": "Etiketli",
+    "untagged": "Etiketsiz",
+    "tagAllUntagged": "🎵 Tüm Etiketsizleri Etiketle",
+    "noFolderSelected": "Klasör seçilmedi"
+  },
+  "fileList": {
+    "filename": "Dosya Adı",
+    "format": "Format",
+    "lyrics": "Söz",
+    "cover": "Kapak",
+    "action": "İşlem",
+    "noFiles": "Bu klasörde ses dosyası bulunamadı",
+    "scanning": "Dosyalar taranıyor...",
+    "errorScanning": "Klasör taranırken hata oluştu",
+    "checkingStatus": "Dosya durumu kontrol ediliyor..."
+  },
+  "buttons": {
+    "identify": "🎵 Tanımla",
+    "identifying": "🔍 Taranıyor...",
+    "saving": "💾 Kaydediliyor...",
+    "fetchLyrics": "🔍 Sözleri Getir",
+    "saveToFile": "💾 Dosyaya Kaydet",
+    "findCover": "🔍 Kapak Resmi Bul",
+    "replaceCover": "🖼️ Kapak Resmini Değiştir",
+    "applyToAll": "📁 Tüm Dosyalara Uygula",
+    "select": "Seç",
+    "cancel": "İptal",
+    "close": "✕ Kapat",
+    "saveSettings": "💾 Ayarları Kaydet",
+    "language": "🌐 Dil"
+  },
+  "details": {
+    "title": "Dosya Detayları",
+    "loading": "Detaylar yükleniyor...",
+    "error": "Dosya detayları yüklenirken hata oluştu",
+    "noTags": "Etiket bulunamadı",
+    "lyricsAlready": "📝 Sözler ✓ Zaten ekli",
+    "noCover": "Kapak Resmi Yok"
+  },
+  "tags": {
+      "title": "Şarkı Adı",
+      "artist": "Sanatçı",
+      "album": "Albüm",
+      "year": "Yıl",
+      "track": "Parça No",
+      "genre": "Tür"
+    
+  },
+  "modal": {
+    "title": "🎵 Doğru eşleşmeyi seçin",
+    "confidence": "Güven",
+    "selectMatch": "Lütfen önce bir eşleşme seçin"
+  },
+  "messages": {
+    "taggedSuccess": "✓ Başarıyla etiketlendi:\n{title}\n{artist}\n{album}",
+    "tagFailed": "Başarısız: {error}",
+    "couldNotIdentify": "Tanımlanamadı.\n{error}",
+    "identifyError": "Hata: {message}",
+    "coverAdded": "✓ Kapak resmi {source} kaynağından başarıyla eklendi! Yenileniyor...",
+    "coverError": "✗ {error}",
+    "coverApplyConfirm": "Mevcut kapak resmini bu klasördeki TÜM {count} ses dosyasına uygulamak istiyor musunuz?\n\nBu, dosyalardaki mevcut kapak resimlerinin üzerine yazacaktır.",
+    "coverApplySuccess": "✓ Kapak resmi {count} dosyaya başarıyla uygulandı!",
+    "coverApplyPartial": "⚠️ {success} dosyaya uygulandı, {fail} dosyada başarısız oldu.",
+    "lyricsFound": "✓ Sözler {source} kaynağından bulundu{synced}",
+    "lyricsAlreadyEmbedded": "✓ Sözler zaten dosyada ekli",
+    "lyricsSaveSuccess": "✓ Sözler dosyaya başarıyla kaydedildi!",
+    "lyricsSaveFailed": "Sözler kaydedilemedi: {error}",
+    "lyricsFetchError": "Bu şarkı için söz bulunamadı",
+    "noArtistTitle": "Bu dosyada sanatçı veya şarkı adı etiketi yok. Lütfen önce dosyayı etiketleyin.",
+    "settingsSaved": "✓ Ayarlar başarıyla kaydedildi!",
+    "settingsSaveFailed": "✗ Ayarlar kaydedilemedi",
+    "enterArtistAlbum": "Lütfen hem sanatçı hem de albüm adını girin",
+    "noCoverFound": "Bu sanatçı/albüm için kapak resmi bulunamadı",
+    "fetchCoverFirst": "Lütfen önce \"Kapak Resmi Bul\" veya \"Kapak Resmini Değiştir\" butonuna tıklayarak bir kapak resmi alın",
+    "taggedAllSummary": "{success} / {total} dosya başarıyla etiketlendi!",
+    "pleaseSelectMatch": "Lütfen önce bir eşleşme seçin"
+  },
+  "placeholders": {
+    "artist": "Sanatçı adı",
+    "album": "Albüm adı",
+    "enterArtist": "Sanatçı adını girin",
+    "enterAlbum": "Albüm adını girin"
+  },
+  "status": {
+    "searchingCover": "🔍 Kapak resmi aranıyor...",
+    "searchingLyrics": "🔍 Sözler aranıyor...",
+    "applyingCover": "📦 Kapak resmi tüm dosyalara uygulanıyor...",
+    "lyricsFound": "✓ Sözler bulundu",
+    "lyricsNotFound": "✗ Söz bulunamadı",
+    "present": "mevcut",
+    "absent": "yok",
+    "checking": "Kontrol ediliyor...",
+    "lyricsPresent": "Sözler mevcut",
+    "lyricsAbsent": "Sözler yok",
+    "coverPresent": "Kapak resmi mevcut",
+    "coverAbsent": "Kapak resmi yok"
+  },
+  "languages": {
+    "en": "English",
+    "tr": "Türkçe",
+    "de": "Deutsch",
+    "es": "Español",
+    "fr": "Français"
+  }
+}
