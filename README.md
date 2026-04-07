@@ -6,6 +6,7 @@
 
 <p align="center">
   <strong>Automatically tag MP3 and FLAC files using acoustic fingerprinting</strong>
+  <p>Note: Though this is an Electron app, I've not tested it in Windows, and due to metaflac CLI tool I used, it would not run on Windows. Mac OS? Don't know. Never tried, never will.</p>
 </p>
 
 <p align="center">
@@ -26,11 +27,11 @@
 - 🐧 **Linux Native** - Available as DEB package and AppImage
 - ⚡ **Fast & Lightweight** - Built with Electron for a responsive desktop experience
 
-## Screenshots
-
-*(Add screenshots of your app here)*
 
 ## Installation
+
+For .deb package: npx electron-builder --linux appimage -c.electronVersion=27.0.0
+AppImage: npx electron-builder --linux deb -c.electronVersion=27.0.0 
 
 ### Ubuntu / Debian (DEB Package)
 
