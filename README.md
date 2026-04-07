@@ -33,9 +33,75 @@
 For .deb package: npx electron-builder --linux appimage -c.electronVersion=27.0.0
 AppImage: npx electron-builder --linux deb -c.electronVersion=27.0.0 
 
+### Install from source:
+
+# Clone the repository
+git clone https://github.com/batasoy2/openpod_tagger.git
+cd openpod_tagger
+
+# Install dependencies
+npm install
+
+# Run the app
+npm start
+
+API Keys (Free)
+
+The following API keys are optional but recommended for full functionality:
+Service	Purpose	Get API Key
+AcoustID	Song identification (required)	Get free key
+Last.fm	Cover art	Get free key
+Genius	Lyrics	Get free key
+Usage
+Quick Start
+
+    Launch openPod Tagger
+
+    Go to File → Settings and add your API keys
+
+    Select a folder containing MP3/FLAC files
+
+    Click "Identify" on any untagged file
+
+    Choose the correct match from the list
+
+    The file is automatically tagged!
+
+Features in Detail
+🔍 Acoustic Identification
+
+    Uses fpcalc to generate audio fingerprints
+
+    Queries AcoustID database for matches
+
+    Shows confidence scores for each match
+
+    Works even with filenames like track01.mp3
+
+🖼️ Cover Art
+
+    Automatically fetches from Last.fm (high quality)
+
+    Falls back to MusicBrainz Cover Art Archive
+
+    Apply cover to single file or entire folder
+
+📃 Lyrics
+
+    Fetches from LRCLIB (free, no API key)
+
+    Falls back to ChartLyrics and Genius
+
+    Saves lyrics directly to file tags
+
+
+
 ### Ubuntu / Debian (DEB Package)
 
 ```bash
 # Download the .deb file from releases
 sudo dpkg -i openpod-tagger_1.0.0_amd64.deb
 sudo apt-get install -f  # Fix dependencies
+**
+
+
