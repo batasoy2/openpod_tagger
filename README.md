@@ -48,11 +48,15 @@ npm start
 API Keys (Free)
 
 The following API keys are optional but recommended for full functionality:
-Service	Purpose	Get API Key
-AcoustID	Song identification (required)	Get free key
-Last.fm	Cover art	Get free key
-Genius	Lyrics	Get free key
-Usage
+
+AcoustID	Song identification (required)
+
+Last.fm	Cover art	
+
+Genius	Lyrics	
+
+
+
 Quick Start
 
     Launch openPod Tagger
